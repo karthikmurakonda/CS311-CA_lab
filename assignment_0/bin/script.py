@@ -18,7 +18,7 @@ filename = 'Main.java'
 compile_java(filename)
 
 # fixed width
-width_list = [x for x in range(1,100,30)]
+width_list = [x for x in range(100,251,50)]
 for w in width_list:
     probabily_list = [x/100 for x in range(0,100,5)]
     time_list = []
@@ -26,22 +26,26 @@ for w in width_list:
         time_list.append(float(execute_java(filename, '', probability, w).strip('\n')))
     print(time_list)
     plt.plot(probabily_list, time_list)
+plt.legend(['width = ' + str(w) for w in width_list], loc='upper left')
 plt.xlabel('Probability')
 plt.ylabel('Time')
 plt.title('Fixed Width')
-plt.show()
+plt.savefig('fixed_width.png')
+plt.close()
 
 # variable width
-# p = 0.5
-# w_list = [x for x in range(2,201)]
-# time_list = []
-# for width in w_list:
-#     time_list.append(float(execute_java(filename, '', p, width).strip('\n')))
-# print(time_list)
-# plt.plot(w_list, time_list)
-# plt.xlabel('Width')
-# plt.ylabel('Time')
-# plt.title('Variable width')
-# plt.show()
+p_list = [0.2,0.5,0.8]
+for p in p_list:
+    w_list = [x for x in range(2,201)]
+    time_list = []
+    for width in w_list:
+        time_list.append(float(execute_java(filename, '', p, width).strip('\n')))
+    print(time_list)
+    plt.plot(w_list, time_list)
+plt.legend(['probability = ' + str(p) for p in p_list], loc='upper left')
+plt.xlabel('Width')
+plt.ylabel('Time')
+plt.title('Variable width')
+plt.savefig('variable_width.png')
 
 
