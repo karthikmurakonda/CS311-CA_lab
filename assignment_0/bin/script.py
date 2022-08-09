@@ -29,7 +29,7 @@ for w in width_list:
 plt.legend(['width = ' + str(w) for w in width_list], loc='upper left')
 plt.xlabel('Probability')
 plt.ylabel('Time')
-plt.title('Fixed Width')
+plt.title('Variable Probability')
 plt.savefig('fixed_width.png')
 plt.close()
 
