@@ -27,13 +27,22 @@ public class Statistics {
 			Misc.printErrorAndExit(e.getMessage());
 		}
 	}
-	
 	// TODO write functions to update statistics
-	public void setNumberOfInstructions(int numberOfInstructions) {
+
+	public static int getNumberOfInstructions() 
+	{
+		return numberOfInstructions;
+	}
+	public static int getNumberOfCycles() 
+	{
+		return numberOfCycles;
+	}
+	public static void setNumberOfInstructions(int numberOfInstructions) 
+	{
 		Statistics.numberOfInstructions = numberOfInstructions;
 	}
-
-	public void setNumberOfCycles(int numberOfCycles) {
+	public static void setNumberOfCycles(int numberOfCycles) {
 		Statistics.numberOfCycles = numberOfCycles;
 	}
+
 }
