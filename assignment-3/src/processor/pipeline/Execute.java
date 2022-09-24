@@ -1,5 +1,6 @@
 package processor.pipeline;
 import processor.Processor;
+
 import generic.Instruction;
 import generic.Instruction.OperationType;
 import generic.Simulator;
@@ -21,16 +22,21 @@ public class Execute {
 	
 	public void performEX()
 	{
-		//TODO
+		// storing x31 here itself to not to complicate.
+		// TODO:remove this later in pipeline
 		if(OF_EX_Latch.isEX_enable())
 		{
 			int op1 = OF_EX_Latch.getOp1();
 			int op2 = OF_EX_Latch.getOp2();
 			int imm = OF_EX_Latch.getImm();
+			System.out.println("op1: "+op1+" op2: "+op2+" imm: "+imm);
 			Instruction instruction = OF_EX_Latch.getInstruction();
 			int cur_pc = containingProcessor.getRegisterFile().getProgramCounter();
 			int alu_result = 0;
+			System.out.println("EX: " + instruction);
 			OperationType alu_op = OF_EX_Latch.getInstruction().getOperationType();
+			System.out.println("ALU OP: " + alu_op);
+			boolean noma = false;
 			switch(alu_op)
 			{
 				case add: alu_result = op1 + op2; break;
@@ -39,8 +45,14 @@ public class Execute {
 				case subi: alu_result = op1 - imm; break;
 				case mul: alu_result = op1 * op2; break;
 				case muli: alu_result = op1 * imm; break;
-				case div: alu_result = op1 / op2; break;
-				case divi: alu_result = op1 / imm; break;
+				case div: 
+				alu_result = op1 / op2;
+				containingProcessor.getRegisterFile().setValue(31, op1 % op2);
+				break;
+				case divi: 
+				alu_result = op1 / imm; 
+				containingProcessor.getRegisterFile().setValue(31, op1 % imm);
+				break;
 				case and: alu_result = op1 & op2; break;
 				case andi: alu_result = op1 & imm; break;
 				case or: alu_result = op1 | op2; break;
@@ -49,25 +61,48 @@ public class Execute {
 				case xori: alu_result = op1 ^ imm; break;
 				case slt: alu_result= (op1 < op2) ? 1 : 0; break;
 				case slti: alu_result= (op1 < imm) ? 1 : 0; break;
-				case sll: alu_result = op1 << op2; break;
-				case slli: alu_result = op1 << imm; break;
-				case srl: alu_result = op1 >>> op2; break;
-				case srli: alu_result = op1 >>> imm; break;
-				case sra: alu_result = op1 >> op2; break;
-				case srai: alu_result = op1 >> imm; break;
+				case sll:
+				containingProcessor.getRegisterFile().setValue(31, (int) Math.pow(2, op2));
+				alu_result = op1 << op2;
+				break;
+				case slli: 
+				containingProcessor.getRegisterFile().setValue(31, (int) Math.pow(2, imm));
+				alu_result = op1 << imm;
+				break;
+				case srl:
+				containingProcessor.getRegisterFile().setValue(31, op1 & (1 << (op2 - 1)));
+				alu_result = op1 >>> op2;
+				break;
+				case srli:
+				containingProcessor.getRegisterFile().setValue(31, op1 & (1 << (imm - 1)));
+				alu_result = op1 >>> imm;
+				break;
+				case sra:
+				containingProcessor.getRegisterFile().setValue(31, op1 & (1 << (op2 - 1)));
+				alu_result = op1 >> op2;
+				break;
+				case srai:
+				containingProcessor.getRegisterFile().setValue(31, op1 & (1 << (imm - 1)));
+				alu_result = op1 >> imm;
+				break;
+
+				case load: alu_result = op1 + imm; break;
+				case store: alu_result = op2 + imm; break;
 				case jmp:
 				{
-					OperandType optype = instruction.getDestinationOperand().getOperandType();
+					OperandType optype = instruction.getSourceOperand1().getOperandType();
 					if (optype == OperandType.Register){
 						imm = containingProcessor.getRegisterFile().getValue(
-							instruction.getDestinationOperand().getValue());
+							instruction.getSourceOperand1().getValue());
 						}
 					else{
 						imm = OF_EX_Latch.getImm();
 						}
-					alu_result = cur_pc + imm;
+					alu_result = cur_pc + imm ;
 					EX_IF_Latch.setIF_enable(true);
+					
 					EX_IF_Latch.setPC(alu_result);
+					noma = true;
 				}
 				break;
 				case beq:
@@ -77,6 +112,7 @@ public class Execute {
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
+						noma = true;
 					}
 				}
 				break;
@@ -87,17 +123,22 @@ public class Execute {
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
+						noma = true;
 					}
 				}
 				break;
 				case blt:
 				{
+
 					if(op1 < op2)
 					{
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
+						noma = true;
+						System.out.println("hello world");
 					}
+					System.out.println("hello world2");
 				}
 				break;
 				case bgt:
@@ -107,6 +148,7 @@ public class Execute {
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
+						noma = true;
 					}
 				}
 				break;
@@ -118,9 +160,15 @@ public class Execute {
 					break;
 				
 			}
+
+			System.out.println("ALU RESULT: " + alu_result+"\n\n");
+
 			EX_MA_Latch.setALUResult(alu_result);
 			EX_MA_Latch.setInstruction(OF_EX_Latch.getInstruction());
-			EX_MA_Latch.setMA_enable(true);
+			if(!noma)
+			{
+				EX_MA_Latch.setMA_enable(true);
+			}
 			OF_EX_Latch.setEX_enable(false);
 		}
 	}

@@ -2,6 +2,7 @@ package generic;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.io.DataInputStream;
 
 import processor.Clock;
 import processor.Processor;
@@ -34,23 +35,19 @@ public class Simulator {
 		try (
 			InputStream is = new FileInputStream(assemblyProgramFile);
 		){
-			int i = 0;
-			byte[] line = new byte[4];
-			boolean isFirstLine = true;
-			while(is.read(line) != -1) {
-				int value = 0;
-				for(int j = 0; j < 4; j++) {
-					value = (value << 8) | (line[j] & 0xff);
-				}
-				System.out.println(value);
-				if(isFirstLine) {
-					processor.getRegisterFile().setProgramCounter(value);
-					isFirstLine = false;
-				}else{
-					processor.getMainMemory().setWord(i, value);
-					i++;
-				}
+			DataInputStream d_is = new DataInputStream(is);
+			int address = -1;
+		while(d_is.available() > 0){
+			int next = d_is.readInt();
+			System.out.println(next);
+			if(address == -1){
+				processor.getRegisterFile().setProgramCounter(next);
 			}
+			else{
+				processor.getMainMemory().setWord(address, next);
+			}
+			address += 1;
+		}
 			processor.getRegisterFile().setValue(0, 0);
 			processor.getRegisterFile().setValue(1, 65535);
 			processor.getRegisterFile().setValue(2, 65535);

@@ -1,9 +1,9 @@
 package processor.pipeline;
 
 import generic.Simulator;
-import processor.Processor;
 import generic.Instruction;
 import generic.Instruction.OperationType;
+import processor.Processor;
 
 public class RegisterWrite {
 	Processor containingProcessor;
