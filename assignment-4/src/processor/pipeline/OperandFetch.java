@@ -1,6 +1,8 @@
 package processor.pipeline;
 
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.Queue;
 
 import generic.Instruction;
 import processor.Processor;
@@ -12,15 +14,38 @@ public class OperandFetch {
 	Processor containingProcessor;
 	IF_OF_LatchType IF_OF_Latch;
 	OF_EX_LatchType OF_EX_Latch;
+	IF_EnableLatchType IF_EnableLatch;
 	static OperationType[] opTypes = OperationType.values();
 	boolean Proceed;
+	Queue<Integer> queue;
+	boolean isEnd;
 	
-	public OperandFetch(Processor containingProcessor, IF_OF_LatchType iF_OF_Latch, OF_EX_LatchType oF_EX_Latch)
+	public OperandFetch(Processor containingProcessor, IF_OF_LatchType iF_OF_Latch, OF_EX_LatchType oF_EX_Latch, IF_EnableLatchType iF_EnableLatch)
 	{
 		this.containingProcessor = containingProcessor;
 		this.IF_OF_Latch = iF_OF_Latch;
 		this.OF_EX_Latch = oF_EX_Latch;
+		this.IF_EnableLatch = iF_EnableLatch;
+		isEnd = false;
 		Proceed = true;
+		queue = new LinkedList<>();
+		queue.add(-1);
+		queue.add(-1);
+		queue.add(-1);
+	}
+
+	boolean checkdatahazard(int[] operands) {
+		for(int i=0;i<operands.length;i++) {
+			if(queue.contains(operands[i])) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	void updateQueue(int operand) {
+		queue.poll();
+		queue.add(operand);
 	}
 
 	public static int twoscompliment(String s) {
@@ -40,6 +65,14 @@ public class OperandFetch {
 	
 	public void performOF()
 	{
+		if(isEnd){
+			IF_EnableLatch.setIF_enable(false);
+			IF_OF_Latch.setOF_enable(false);
+			OF_EX_Latch.setEX_enable(false);
+			return;
+		}
+		int addtoqueue = -1;
+		boolean noDataHazard = true;
 		if(IF_OF_Latch.isOF_enable() && Proceed)
 		{
 			int instruction = IF_OF_Latch.getInstruction();
@@ -73,16 +106,20 @@ public class OperandFetch {
 				rs1.setValue(Integer.parseInt(bin_instr.substring(5, 10), 2));
 				rs2.setValue(Integer.parseInt(bin_instr.substring(10, 15), 2));
 				rd.setValue(Integer.parseInt(bin_instr.substring(15, 20), 2));
-
+				
 				int op1 = containingProcessor.getRegisterFile().getValue(rs1.getValue());
 				int op2 = containingProcessor.getRegisterFile().getValue(rs2.getValue());
-				
-				OF_EX_Latch.setInstruction(instr);
-				OF_EX_Latch.setOp1(op1);
-				OF_EX_Latch.setOp2(op2);
-				instr.setDestinationOperand(rd);
-				instr.setSourceOperand1(rs1);
-				instr.setSourceOperand2(rs2);
+				if (checkdatahazard(new int[] { rs1.getValue(), rs2.getValue() })) {
+					noDataHazard = false;
+				}else{
+					addtoqueue = rd.getValue();
+					OF_EX_Latch.setInstruction(instr);
+					OF_EX_Latch.setOp1(op1);
+					OF_EX_Latch.setOp2(op2);
+					instr.setDestinationOperand(rd);
+					instr.setSourceOperand1(rs1);
+					instr.setSourceOperand2(rs2);
+				}
 			}
 			else if (Arrays.stream(R2I_type_operators).anyMatch(x -> x == opcode)) {
 				Operand rs1 = new Operand();
@@ -100,17 +137,24 @@ public class OperandFetch {
 				}
 				int op1 = containingProcessor.getRegisterFile().getValue(rs1.getValue());
 				int op2 = containingProcessor.getRegisterFile().getValue(rd.getValue());
-				System.out.println("imm: " + imm);
-
-				OF_EX_Latch.setInstruction(instr);
-				OF_EX_Latch.setImm(imm);
-				OF_EX_Latch.setOp1(op1);
-				OF_EX_Latch.setOp2(op2);
-
-				System.out.println("op1: " + op1);
-				System.out.println("op2: " + rd);
-				instr.setDestinationOperand(rd);
-				instr.setSourceOperand1(rs1);
+				// System.out.println("imm: " + imm);
+				
+				if (checkdatahazard(new int[] { rs1.getValue() })) {
+					noDataHazard = false;
+				}else{
+					if(opcode <= 22) { // > 21 means it is a branch instruction so no need to update queue
+						addtoqueue = rd.getValue();
+					}
+					OF_EX_Latch.setInstruction(instr);
+					OF_EX_Latch.setImm(imm);
+					OF_EX_Latch.setOp1(op1);
+					OF_EX_Latch.setOp2(op2);
+					instr.setDestinationOperand(rd);
+					instr.setSourceOperand1(rs1);
+				}
+				// if(opcode == 22){
+					
+				// }
 			}
 			else if (Arrays.stream(R1I_type_operators).anyMatch(x -> x == opcode)) {
 				if(opcode != 24){
@@ -125,11 +169,16 @@ public class OperandFetch {
 						imm = -1*twoscompliment(bin_instr.substring(10, 32));
 						System.out.println(bin_instr);
 					}
-					System.out.println("imm: " + imm);
+					// if (checkdatahazard(new int[] { rd.getValue() })) {
+					// 	noDataHazard = false;
+					// }else{
+					containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
 					OF_EX_Latch.setInstruction(instr);
 					OF_EX_Latch.setImm(imm);
+					isEnd = true;
+					// }
 				}
-				else{
+				else{ // opcode == 24 jmp
 					Operand op = new Operand();
 					String imm = bin_instr.substring(10, 32);
 					int imm_val = Integer.parseInt(imm, 2);
@@ -146,16 +195,26 @@ public class OperandFetch {
 						op.setValue(Integer.parseInt(bin_instr.substring(5, 10), 2));
 						instr.setSourceOperand1(op);
 					}
-					OF_EX_Latch.setInstruction(instr);
-					OF_EX_Latch.setImm(imm_val);
+					if (checkdatahazard(new int[] { op.getValue() })) {
+						noDataHazard = false;
+					}else{
+						OF_EX_Latch.setInstruction(instr);
+						OF_EX_Latch.setImm(imm_val);
+					}
 				}
 			}
 
-			OF_EX_Latch.setEX_enable(true);
+			OF_EX_Latch.setEX_enable(noDataHazard);
+			if(!noDataHazard){
+				IF_EnableLatch.setFreeze(true);
+				System.out.println("\n\nData Hazard - Interlock\n\n");
+			}
 		}
 		else if (!Proceed) {
 			Proceed = true;
+			System.out.println("\n\nControl Hazard - Interlock\n\n");
 		}
+		updateQueue(addtoqueue);
 	}
 
 	public void setProceed(boolean proceed) {

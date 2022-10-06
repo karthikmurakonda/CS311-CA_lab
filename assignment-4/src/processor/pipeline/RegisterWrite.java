@@ -24,7 +24,7 @@ public class RegisterWrite {
 			Instruction instruction = MA_RW_Latch.getInstruction();
 			OperationType op_type = instruction.getOperationType();
 			int alu_result = MA_RW_Latch.getALU_result();
-
+			boolean proceed = true;
 			if (op_type==OperationType.load)
 			{
 				int load_result = MA_RW_Latch.getLoad_result();
@@ -34,6 +34,7 @@ public class RegisterWrite {
 			else if (op_type==OperationType.end)
 			{
 				Simulator.setSimulationComplete(true);
+				proceed = false;
 			}
 			else
 			{
@@ -44,7 +45,18 @@ public class RegisterWrite {
 					containingProcessor.getRegisterFile().setValue(rd, alu_result);
 				}
 			}
-			IF_EnableLatch.setIF_enable(true);
+			IF_EnableLatch.setIF_enable(proceed);
+		}else{
+			try{
+				if(MA_RW_Latch.getInstruction().getOperationType() == OperationType.end){
+					IF_EnableLatch.setIF_enable(false);
+				}
+				else{
+					IF_EnableLatch.setIF_enable(true);
+				}
+			} catch(Exception e){
+				IF_EnableLatch.setIF_enable(true);
+			}
 		}
 	}
 
