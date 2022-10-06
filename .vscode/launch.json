@@ -8,7 +8,8 @@
             "type": "java",
             "name": "Launch Current File",
             "request": "launch",
-            "mainClass": "${file}"
+            "mainClass": "${file}",
+            "args": ["assignment-4/src/configuration/config.xml", "assignment-4/src/hello.txt", "assignment-4/supporting_files/test_cases/evenorodd.out"]
         },
         {
             "type": "java",

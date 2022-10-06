@@ -3,7 +3,6 @@ import processor.Processor;
 
 import generic.Instruction;
 import generic.Instruction.OperationType;
-import generic.Simulator;
 import generic.Operand.OperandType;
 
 public class Execute {
@@ -109,10 +108,11 @@ public class Execute {
 				{
 					if(op1 == op2)
 					{
-						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
+						alu_result = cur_pc + imm;
 						EX_IF_Latch.setPC(alu_result);
 						noma = true;
+						containingProcessor.getOFUnit().setProceed(false);
 					}
 				}
 				break;
@@ -136,9 +136,10 @@ public class Execute {
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
 						noma = true;
-						System.out.println("hello world");
+						containingProcessor.getOFUnit().setProceed(false);
+						// System.out.println("hello world");
 					}
-					System.out.println("hello world2");
+					// System.out.println("hello world2");
 				}
 				break;
 				case bgt:
@@ -154,7 +155,8 @@ public class Execute {
 				break;
 				case end:
 				{
-					Simulator.setSimulationComplete(true);
+
+					break;
 				}
 				default:
 					break;
@@ -169,7 +171,6 @@ public class Execute {
 			{
 				EX_MA_Latch.setMA_enable(true);
 			}
-			OF_EX_Latch.setEX_enable(false);
 		}
 	}
 }

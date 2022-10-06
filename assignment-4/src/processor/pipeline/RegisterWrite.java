@@ -44,7 +44,6 @@ public class RegisterWrite {
 					containingProcessor.getRegisterFile().setValue(rd, alu_result);
 				}
 			}
-			MA_RW_Latch.setRW_enable(false);
 			IF_EnableLatch.setIF_enable(true);
 		}
 	}

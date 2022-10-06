@@ -37,7 +37,6 @@ public class MemoryAccess {
 			}
 			MA_RW_Latch.setInstruction(instruction);
 			MA_RW_Latch.setRW_enable(true);
-			EX_MA_Latch.setMA_enable(false);
 
 		}
 	}

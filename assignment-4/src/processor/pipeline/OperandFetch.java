@@ -13,12 +13,14 @@ public class OperandFetch {
 	IF_OF_LatchType IF_OF_Latch;
 	OF_EX_LatchType OF_EX_Latch;
 	static OperationType[] opTypes = OperationType.values();
+	boolean Proceed;
 	
 	public OperandFetch(Processor containingProcessor, IF_OF_LatchType iF_OF_Latch, OF_EX_LatchType oF_EX_Latch)
 	{
 		this.containingProcessor = containingProcessor;
 		this.IF_OF_Latch = iF_OF_Latch;
 		this.OF_EX_Latch = oF_EX_Latch;
+		Proceed = true;
 	}
 
 	public static int twoscompliment(String s) {
@@ -38,12 +40,12 @@ public class OperandFetch {
 	
 	public void performOF()
 	{
-		if(IF_OF_Latch.isOF_enable())
+		if(IF_OF_Latch.isOF_enable() && Proceed)
 		{
 			int instruction = IF_OF_Latch.getInstruction();
 			Instruction instr = new Instruction();
 			String bin_instr = Integer.toBinaryString(instruction);
-			if (bin_instr.length() < 32) {	// TODO: check if this is correct
+			if (bin_instr.length() < 32) {
 				int diff = 32 - bin_instr.length();
 				String zeros = "";
 				for (int i = 0; i < diff; i++) {
@@ -91,7 +93,7 @@ public class OperandFetch {
 				rs1.setValue(Integer.parseInt(bin_instr.substring(5, 10), 2));
 				rd.setValue(Integer.parseInt(bin_instr.substring(10, 15), 2));
 				// check 15th bit to see if it is negative
-				int imm = Integer.parseInt(bin_instr.substring(15, 32), 2); // TODO: 2's complement
+				int imm = Integer.parseInt(bin_instr.substring(15, 32), 2);
 				if (bin_instr.charAt(15)=='1'){
 					imm = -1*twoscompliment(bin_instr.substring(15, 32));
 					System.out.println(bin_instr);
@@ -118,7 +120,7 @@ public class OperandFetch {
 	
 					instr.setDestinationOperand(rd);
 	
-					int imm = Integer.parseInt(bin_instr.substring(10, 32), 2); // TODO: 2's complement
+					int imm = Integer.parseInt(bin_instr.substring(10, 32), 2);
 					if (bin_instr.charAt(10)=='1'){
 						imm = -1*twoscompliment(bin_instr.substring(10, 32));
 						System.out.println(bin_instr);
@@ -149,8 +151,17 @@ public class OperandFetch {
 				}
 			}
 
-			IF_OF_Latch.setOF_enable(false);
 			OF_EX_Latch.setEX_enable(true);
+		}
+		else if (!Proceed) {
+			Proceed = true;
+		}
+	}
+
+	public void setProceed(boolean proceed) {
+		Proceed = proceed;
+		if (!Proceed) {
+			OF_EX_Latch.setEX_enable(false);
 		}
 	}
 
