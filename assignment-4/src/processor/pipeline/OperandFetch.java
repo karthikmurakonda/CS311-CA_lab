@@ -139,7 +139,7 @@ public class OperandFetch {
 				int op2 = containingProcessor.getRegisterFile().getValue(rd.getValue());
 				// System.out.println("imm: " + imm);
 				
-				if (checkdatahazard(new int[] { rs1.getValue() })) {
+				if (checkdatahazard(new int[] { rs1.getValue(), rd.getValue()})){
 					noDataHazard = false;
 				}else{
 					if(opcode <= 22) { // > 21 means it is a branch instruction so no need to update queue
@@ -152,9 +152,9 @@ public class OperandFetch {
 					instr.setDestinationOperand(rd);
 					instr.setSourceOperand1(rs1);
 				}
-				// if(opcode == 22){
+				if(opcode == 22){
 					
-				// }
+				}
 			}
 			else if (Arrays.stream(R1I_type_operators).anyMatch(x -> x == opcode)) {
 				if(opcode != 24){

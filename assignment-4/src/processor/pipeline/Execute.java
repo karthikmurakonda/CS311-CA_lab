@@ -124,6 +124,7 @@ public class Execute {
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
 						noma = true;
+						containingProcessor.getOFUnit().setProceed(false);
 					}
 				}
 				break;
@@ -150,6 +151,7 @@ public class Execute {
 						EX_IF_Latch.setIF_enable(true);
 						EX_IF_Latch.setPC(alu_result);
 						noma = true;
+						containingProcessor.getOFUnit().setProceed(false);
 					}
 				}
 				break;
