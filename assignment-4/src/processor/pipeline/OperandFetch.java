@@ -152,9 +152,6 @@ public class OperandFetch {
 					instr.setDestinationOperand(rd);
 					instr.setSourceOperand1(rs1);
 				}
-				if(opcode == 22){
-					
-				}
 			}
 			else if (Arrays.stream(R1I_type_operators).anyMatch(x -> x == opcode)) {
 				if(opcode != 24){
@@ -172,10 +169,10 @@ public class OperandFetch {
 					// if (checkdatahazard(new int[] { rd.getValue() })) {
 					// 	noDataHazard = false;
 					// }else{
-					containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
+					// containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
 					OF_EX_Latch.setInstruction(instr);
-					OF_EX_Latch.setImm(imm);
-					isEnd = true;
+					// OF_EX_Latch.setImm(imm);
+					// isEnd = true;
 					// }
 				}
 				else{ // opcode == 24 jmp
@@ -215,6 +212,10 @@ public class OperandFetch {
 			System.out.println("\n\nControl Hazard - Interlock\n\n");
 		}
 		updateQueue(addtoqueue);
+	}
+
+	public void setisEnd(boolean isEnd) {
+		this.isEnd = isEnd;
 	}
 
 	public void setProceed(boolean proceed) {

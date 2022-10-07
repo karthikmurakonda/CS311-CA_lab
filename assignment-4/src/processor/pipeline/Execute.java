@@ -100,8 +100,9 @@ public class Execute {
 					alu_result = cur_pc + imm ;
 					EX_IF_Latch.setIF_enable(true);
 					
-					EX_IF_Latch.setPC(alu_result);
+					EX_IF_Latch.setPC(alu_result-1);
 					noma = true;
+					containingProcessor.getOFUnit().setProceed(false);
 				}
 				break;
 				case beq:
@@ -110,7 +111,7 @@ public class Execute {
 					{
 						EX_IF_Latch.setIF_enable(true);
 						alu_result = cur_pc + imm;
-						EX_IF_Latch.setPC(alu_result);
+						EX_IF_Latch.setPC(alu_result-1);
 						noma = true;
 						containingProcessor.getOFUnit().setProceed(false);
 					}
@@ -122,7 +123,7 @@ public class Execute {
 					{
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
-						EX_IF_Latch.setPC(alu_result);
+						EX_IF_Latch.setPC(alu_result-1);
 						noma = true;
 						containingProcessor.getOFUnit().setProceed(false);
 					}
@@ -135,7 +136,7 @@ public class Execute {
 					{
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
-						EX_IF_Latch.setPC(alu_result);
+						EX_IF_Latch.setPC(alu_result-1);
 						noma = true;
 						containingProcessor.getOFUnit().setProceed(false);
 						// System.out.println("hello world");
@@ -149,7 +150,7 @@ public class Execute {
 					{
 						alu_result = cur_pc + imm;
 						EX_IF_Latch.setIF_enable(true);
-						EX_IF_Latch.setPC(alu_result);
+						EX_IF_Latch.setPC(alu_result-1);
 						noma = true;
 						containingProcessor.getOFUnit().setProceed(false);
 					}
@@ -157,7 +158,8 @@ public class Execute {
 				break;
 				case end:
 				{
-
+					containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
+					containingProcessor.getOFUnit().setisEnd(true);
 					break;
 				}
 				default:

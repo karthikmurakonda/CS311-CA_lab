@@ -20,11 +20,13 @@ public class InstructionFetch {
 	public void performIF()
 	{	if(!IF_EnableLatch.isFreeze()){
 			if(EX_IF_Latch.isIF_enable()){
-				containingProcessor.getRegisterFile().setProgramCounter(EX_IF_Latch.getPC());
+				containingProcessor.getRegisterFile().setProgramCounter(EX_IF_Latch.getPC()-1);
 				EX_IF_Latch.setIF_enable(false);
+				IF_OF_Latch.setOF_enable(false);
 				System.out.println("IF: PC set to " + EX_IF_Latch.getPC());
+
 			} // if EX_IF_Latch is enabled, set PC to EX_IF_Latch's PC and wait for next cycle (1 nop)
-			else if(IF_EnableLatch.isIF_enable())
+			else if(IF_EnableLatch.isIF_enable() || EX_IF_Latch.isIF_enable())
 			{
 				int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
 				int newInstruction = containingProcessor.getMainMemory().getWord(currentPC);
