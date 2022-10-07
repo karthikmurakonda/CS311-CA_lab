@@ -70,13 +70,9 @@ public class Simulator {
 			processor.getOFUnit().performOF();
 			processor.getIFUnit().performIF();
 			Clock.incrementClock();
-
-			Statistics.setNumberOfInstructions(Statistics.getNumberOfInstructions() + 1);
+			// Statistics.setNumberOfInstructions(Statistics.getNumberOfInstructions() + 1);
 			Statistics.setNumberOfCycles(Statistics.getNumberOfCycles() + 1);
 		}
-		
-		// TODO
-		// set statistics
 	}
 	
 	public static void setSimulationComplete(boolean value)

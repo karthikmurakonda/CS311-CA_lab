@@ -2,6 +2,7 @@ package processor.pipeline;
 import processor.Processor;
 
 import generic.Instruction;
+import generic.Statistics;
 import generic.Instruction.OperationType;
 import generic.Operand.OperandType;
 
@@ -36,6 +37,7 @@ public class Execute {
 			OperationType alu_op = OF_EX_Latch.getInstruction().getOperationType();
 			System.out.println("ALU OP: " + alu_op);
 			boolean noma = false;
+			Statistics.setNumberOfInstructions(Statistics.getNumberOfInstructions() + 1);
 			switch(alu_op)
 			{
 				case add: alu_result = op1 + op2; break;
@@ -174,6 +176,8 @@ public class Execute {
 			if(!noma)
 			{
 				EX_MA_Latch.setMA_enable(true);
+			}else{
+				Statistics.setControlhazards(Statistics.getControlhazards()+2); // stall 2 cycles
 			}
 		}
 	}

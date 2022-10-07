@@ -9,6 +9,7 @@ import processor.Processor;
 import generic.Instruction.OperationType;
 import generic.Operand.OperandType;
 import generic.Operand;
+import generic.Statistics;
 
 public class OperandFetch {
 	Processor containingProcessor;
@@ -154,26 +155,13 @@ public class OperandFetch {
 				}
 			}
 			else if (Arrays.stream(R1I_type_operators).anyMatch(x -> x == opcode)) {
-				if(opcode != 24){
+				if(opcode != 24){ // end
 					Operand rd = new Operand();
 					rd.setOperandType(Operand.OperandType.Register);
 					rd.setValue(Integer.parseInt(bin_instr.substring(5, 10), 2));
 	
 					instr.setDestinationOperand(rd);
-	
-					int imm = Integer.parseInt(bin_instr.substring(10, 32), 2);
-					if (bin_instr.charAt(10)=='1'){
-						imm = -1*twoscompliment(bin_instr.substring(10, 32));
-						System.out.println(bin_instr);
-					}
-					// if (checkdatahazard(new int[] { rd.getValue() })) {
-					// 	noDataHazard = false;
-					// }else{
-					// containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
 					OF_EX_Latch.setInstruction(instr);
-					// OF_EX_Latch.setImm(imm);
-					// isEnd = true;
-					// }
 				}
 				else{ // opcode == 24 jmp
 					Operand op = new Operand();
@@ -205,6 +193,7 @@ public class OperandFetch {
 			if(!noDataHazard){
 				IF_EnableLatch.setFreeze(true);
 				System.out.println("\n\nData Hazard - Interlock\n\n");
+				Statistics.setDatahazards(Statistics.getDatahazards() + 1);
 			}
 		}
 		else if (!Proceed) {

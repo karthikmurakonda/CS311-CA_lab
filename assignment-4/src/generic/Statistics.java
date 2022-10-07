@@ -7,7 +7,8 @@ public class Statistics {
 	// TODO add your statistics here
 	static int numberOfInstructions;
 	static int numberOfCycles;
-	
+	static int datahazards;
+	static int controlhazards;
 
 	public static void printStatistics(String statFile)
 	{
@@ -17,6 +18,8 @@ public class Statistics {
 			
 			writer.println("Number of instructions executed = " + numberOfInstructions);
 			writer.println("Number of cycles taken = " + numberOfCycles);
+			writer.println("Number of data hazards = " + datahazards);
+			writer.println("Number of control hazards = " + controlhazards);
 			
 			// TODO add code here to print statistics in the output file
 			
@@ -44,5 +47,22 @@ public class Statistics {
 	public static void setNumberOfCycles(int numberOfCycles) {
 		Statistics.numberOfCycles = numberOfCycles;
 	}
+
+	public static int getDatahazards() {
+		return datahazards;
+	}
+
+	public static void setDatahazards(int datahazards) {
+		Statistics.datahazards = datahazards;
+	}
+
+	public static int getControlhazards() {
+		return controlhazards;
+	}
+
+	public static void setControlhazards(int controlhazards) {
+		Statistics.controlhazards = controlhazards;
+	}
+
 
 }

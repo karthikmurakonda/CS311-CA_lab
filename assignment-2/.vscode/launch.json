@@ -9,16 +9,14 @@
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": ["assignment-1/src/descending.asm", "descending.out"]
+            "args": ["../assignment-1/src/descending.asm", "descending.out"]
         },
         {
             "type": "java",
             "name": "Launch Main",
             "request": "launch",
             "mainClass": "main.Main",
-            "projectName": "cs311-lab_a8b7b69f",
-            "args": ["configuration/config.xml", "hello.txt", "../supporting_files/test_cases/fibonacci.out"]
+            "projectName": "assignment-2_d93382a2"
         }
-
     ]
 }
