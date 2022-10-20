@@ -160,7 +160,7 @@ public class Execute {
 				break;
 				case end:
 				{
-					containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
+					// containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
 					containingProcessor.getOFUnit().setisEnd(true);
 					break;
 				}

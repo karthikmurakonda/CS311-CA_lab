@@ -17,7 +17,7 @@ public class OperandFetch {
 	OF_EX_LatchType OF_EX_Latch;
 	IF_EnableLatchType IF_EnableLatch;
 	static OperationType[] opTypes = OperationType.values();
-	boolean Proceed;
+	public boolean Proceed;
 	Queue<Integer> queue;
 	boolean isEnd;
 	
@@ -197,7 +197,7 @@ public class OperandFetch {
 			}
 		}
 		else if (!Proceed) {
-			Proceed = true;
+			// Proceed = true;
 			System.out.println("\n\nControl Hazard - Interlock\n\n");
 		}
 		updateQueue(addtoqueue);

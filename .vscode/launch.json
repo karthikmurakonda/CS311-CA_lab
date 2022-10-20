@@ -9,7 +9,7 @@
             "name": "Launch Current File",
             "request": "launch",
             "mainClass": "${file}",
-            "args": ["assignment-1/src/descending.asm", "descending.out"]
+            "args": ["assignment-5/src/configuration/config.xml", "assignment-5/src/hello.txt", "assignment-5/supporting_files/test_cases/descending.out"]
         },
         {
             "type": "java",
