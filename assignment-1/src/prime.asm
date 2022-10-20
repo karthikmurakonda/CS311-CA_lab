@@ -14,7 +14,7 @@ round:
 check:
     beq %x31, 0, notAnswer
     addi %x3, 1, %x3
-    blt %x3, %x4, round
+    blt %x3, %x11, round
 Answer:
     addi %x0, 1, %x10
     end
