@@ -195,10 +195,14 @@ public class OperandFetch {
 				System.out.println("\n\nData Hazard - Interlock\n\n");
 				Statistics.setDatahazards(Statistics.getDatahazards() + 1);
 			}
+			OF_EX_Latch.setEX_enable(true);
 		}
 		else if (!Proceed) {
 			// Proceed = true;
-			System.out.println("\n\nControl Hazard - Interlock\n\n");
+			OF_EX_Latch.setEX_enable(false);
+			// System.out.println("\n\nControl Hazard - Interlock\n\n");
+		}else{
+			OF_EX_Latch.setEX_enable(false);
 		}
 		updateQueue(addtoqueue);
 	}

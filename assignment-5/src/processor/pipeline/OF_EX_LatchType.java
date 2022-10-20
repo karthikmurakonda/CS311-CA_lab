@@ -7,6 +7,7 @@ public class OF_EX_LatchType {
 	boolean EX_enable;
 	Instruction instruction;
 	int op1, op2, imm;
+	boolean EX_busy=false;
 	
 	public OF_EX_LatchType()
 	{
@@ -53,5 +54,12 @@ public class OF_EX_LatchType {
 		EX_enable = eX_enable;
 	}
 
+	public boolean isEX_busy() {
+		return EX_busy;
+	}
+
+	public void setEX_busy(boolean isEX_busy) {
+		this.EX_busy = isEX_busy;
+	}
 
 }
