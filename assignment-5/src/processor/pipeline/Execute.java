@@ -56,6 +56,13 @@ public class Execute implements Element{
 
 	@Override
 	public void handleEvent(Event e) {
+
+		if(EX_MA_Latch.isMA_busy()){
+			e.setEventTime(e.getEventTime()+1);
+			Simulator.getEventQueue().addEvent(e);
+			return;
+		}
+
 		int op1 = OF_EX_Latch.getOp1();
 		int op2 = OF_EX_Latch.getOp2();
 		int imm = OF_EX_Latch.getImm();

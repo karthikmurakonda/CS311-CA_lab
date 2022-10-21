@@ -6,6 +6,7 @@ public class IF_OF_LatchType {
 	int instruction;
 	boolean IF_busy=false;
 	boolean IF_branching_busy=false;
+	boolean OF_busy=false;
 	
 	public IF_OF_LatchType()
 	{
@@ -43,4 +44,13 @@ public class IF_OF_LatchType {
 	public void setIF_branching_busy(boolean iF_branching_busy) {
 		IF_branching_busy = iF_branching_busy;
 	}
+
+	public boolean isOF_busy() {
+		return OF_busy;
+	}
+
+	public void setOF_busy(boolean oF_busy) {
+		OF_busy = oF_busy;
+	}
+
 }

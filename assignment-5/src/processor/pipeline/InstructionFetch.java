@@ -26,7 +26,7 @@ public class InstructionFetch implements Element{
 	
 	public void performIF()
 	{
-			if(EX_IF_Latch.isIF_enable() && !IF_OF_Latch.isIF_branching_busy()){
+			if(EX_IF_Latch.isIF_enable() && !IF_OF_Latch.isIF_branching_busy() &&!IF_OF_Latch.isIF_busy()){
 				containingProcessor.getRegisterFile().setProgramCounter(EX_IF_Latch.getPC());
 				int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
 
@@ -38,6 +38,7 @@ public class InstructionFetch implements Element{
 								currentPC
 								)
 						);
+				System.out.println("H1");
 				IF_OF_Latch.setIF_branching_busy(true);
 
 
@@ -48,30 +49,42 @@ public class InstructionFetch implements Element{
 			} // if EX_IF_Latch is enabled, set PC to EX_IF_Latch's PC and wait for next cycle (1 nop)
 			else if(IF_EnableLatch.isIF_enable())
 			{
-				if(IF_OF_Latch.isIF_busy()){
-					return;
+				if(!IF_EnableLatch.isFreeze()){
+					if(IF_OF_Latch.isIF_busy()){
+						return;
+					}
+					int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
+					// int newInstruction = containingProcessor.getMainMemory().getWord(currentPC);
+					// IF_OF_Latch.setInstruction(newInstruction);
+					// containingProcessor.getRegisterFile().setProgramCounter(currentPC + 1);
+					
+					Simulator.getEventQueue().addEvent(
+						new MemoryReadEvent(
+							Clock.getCurrentTime()+ Configuration.mainMemoryLatency,
+							this,
+							containingProcessor.getMainMemory(),
+							currentPC
+						)
+					);
+					System.out.println("H2");
+					IF_OF_Latch.setIF_busy(true);
+					IF_OF_Latch.setOF_enable(false);
+				}else{
+					IF_EnableLatch.setFreeze(false);
 				}
-				int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
-				// int newInstruction = containingProcessor.getMainMemory().getWord(currentPC);
-				// IF_OF_Latch.setInstruction(newInstruction);
-				// containingProcessor.getRegisterFile().setProgramCounter(currentPC + 1);
-				
-				Simulator.getEventQueue().addEvent(
-					new MemoryReadEvent(
-						Clock.getCurrentTime()+ Configuration.mainMemoryLatency,
-						this,
-						containingProcessor.getMainMemory(),
-						currentPC
-					)
-				);
-				IF_OF_Latch.setIF_busy(true);
-				IF_OF_Latch.setOF_enable(false);
 
 			}
 	}
 
 	@Override
 	public void handleEvent(Event e) {
+		if(IF_OF_Latch.isOF_busy()|| IF_EnableLatch.isFreeze()){
+			e.setEventTime(Clock.getCurrentTime()+1);
+			Simulator.getEventQueue().addEvent(e);
+			IF_EnableLatch.setFreeze(false);
+			IF_OF_Latch.setOF_enable(true);
+			return;
+		}
 		if(IF_OF_Latch.isIF_branching_busy()){
 			IF_EnableLatch.setFreeze(false);
 			IF_OF_Latch.setIF_branching_busy(false);
@@ -84,6 +97,7 @@ public class InstructionFetch implements Element{
 		containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter() + 1);
 		IF_OF_Latch.setOF_enable(true);
 		IF_OF_Latch.setIF_busy(false);
+		IF_EnableLatch.setFreeze(false);
 	}
 
 }

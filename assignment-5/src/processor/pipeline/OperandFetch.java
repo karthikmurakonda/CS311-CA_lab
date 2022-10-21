@@ -33,6 +33,7 @@ public class OperandFetch {
 		queue.add(-1);
 		queue.add(-1);
 		queue.add(-1);
+		// queue.add(-1);
 	}
 
 	boolean checkdatahazard(int[] operands) {
@@ -72,9 +73,16 @@ public class OperandFetch {
 			OF_EX_Latch.setEX_enable(false);
 			return;
 		}
+		if(OF_EX_Latch.isEX_busy()) {
+			IF_OF_Latch.setOF_busy(true);
+			return;
+		}else{
+			IF_OF_Latch.setOF_busy(false);
+		}
+
 		int addtoqueue = -1;
 		boolean noDataHazard = true;
-		if(IF_OF_Latch.isOF_enable() && Proceed)
+		if(IF_OF_Latch.isOF_enable() && Proceed && !IF_OF_Latch.isOF_busy())
 		{
 			int instruction = IF_OF_Latch.getInstruction();
 			Instruction instr = new Instruction();
@@ -195,16 +203,18 @@ public class OperandFetch {
 				System.out.println("\n\nData Hazard - Interlock\n\n");
 				Statistics.setDatahazards(Statistics.getDatahazards() + 1);
 			}
-			OF_EX_Latch.setEX_enable(true);
+			// OF_EX_Latch.setEX_enable(true);
+			updateQueue(addtoqueue);
 		}
 		else if (!Proceed) {
 			// Proceed = true;
+			// updateQueue(addtoqueue);
 			OF_EX_Latch.setEX_enable(false);
 			// System.out.println("\n\nControl Hazard - Interlock\n\n");
 		}else{
 			OF_EX_Latch.setEX_enable(false);
 		}
-		updateQueue(addtoqueue);
+		// updateQueue(addtoqueue);
 	}
 
 	public void setisEnd(boolean isEnd) {

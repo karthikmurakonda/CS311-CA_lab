@@ -9,6 +9,7 @@ public class EX_MA_LatchType {
 	Operand op2;
 	Instruction instruction;
 	int aluResult;
+	boolean MA_busy;
 	
 	public EX_MA_LatchType()
 	{
@@ -45,6 +46,14 @@ public class EX_MA_LatchType {
 
 	public void setMA_enable(boolean mA_enable) {
 		MA_enable = mA_enable;
+	}
+
+	public boolean isMA_busy() {
+		return MA_busy;
+	}
+
+	public void setMA_busy(boolean mA_busy) {
+		MA_busy = mA_busy;
 	}
 
 }
