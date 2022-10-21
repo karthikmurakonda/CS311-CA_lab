@@ -6,6 +6,7 @@ import generic.Event;
 import generic.MemoryReadEvent;
 import generic.MemoryResponseEvent;
 import generic.Simulator;
+import generic.Statistics;
 import processor.Clock;
 import processor.Processor;
 
@@ -54,9 +55,6 @@ public class InstructionFetch implements Element{
 						return;
 					}
 					int currentPC = containingProcessor.getRegisterFile().getProgramCounter();
-					// int newInstruction = containingProcessor.getMainMemory().getWord(currentPC);
-					// IF_OF_Latch.setInstruction(newInstruction);
-					// containingProcessor.getRegisterFile().setProgramCounter(currentPC + 1);
 					
 					Simulator.getEventQueue().addEvent(
 						new MemoryReadEvent(
@@ -93,6 +91,7 @@ public class InstructionFetch implements Element{
 			return;
 		}
 		MemoryResponseEvent event = (MemoryResponseEvent) e;
+		Statistics.setNumberOfInstructions(Statistics.getNumberOfInstructions()+1);
 		IF_OF_Latch.setInstruction(event.getValue());
 		containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter() + 1);
 		IF_OF_Latch.setOF_enable(true);

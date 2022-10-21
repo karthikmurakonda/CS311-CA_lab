@@ -26,8 +26,6 @@ public class Execute implements Element{
 	
 	public void performEX()
 	{
-		// storing x31 here itself to not to complicate.
-		// TODO:remove this later in pipeline
 		if(OF_EX_Latch.isEX_enable()&& !OF_EX_Latch.isEX_busy())
 		{
 
@@ -74,7 +72,6 @@ public class Execute implements Element{
 		OperationType alu_op = OF_EX_Latch.getInstruction().getOperationType();
 		System.out.println("ALU OP: " + alu_op);
 		boolean noma = false;
-		Statistics.setNumberOfInstructions(Statistics.getNumberOfInstructions() + 1);
 		switch(alu_op)
 		{
 			case add: alu_result = op1 + op2; break;
@@ -178,9 +175,7 @@ public class Execute implements Element{
 					EX_IF_Latch.setPC(alu_result-1);
 					noma = true;
 					containingProcessor.getOFUnit().setProceed(false);
-					// System.out.println("hello world");
 				}
-				// System.out.println("hello world2");
 			}
 			break;
 			case bgt:
@@ -197,7 +192,6 @@ public class Execute implements Element{
 			break;
 			case end:
 			{
-				// containingProcessor.getRegisterFile().setProgramCounter(containingProcessor.getRegisterFile().getProgramCounter()-1);
 				containingProcessor.getOFUnit().setisEnd(true);
 				break;
 			}

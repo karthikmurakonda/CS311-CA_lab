@@ -39,7 +39,6 @@ public class MemoryAccess implements Element {
 			{
 				int val_store = containingProcessor.getRegisterFile().getValue(
 				instruction.getSourceOperand1().getValue());
-				// containingProcessor.getMainMemory().setWord(alu_result, val_store);
 				Simulator.getEventQueue().addEvent(
 					new MemoryWriteEvent(
 						Clock.getCurrentTime()+Configuration.mainMemoryLatency,
@@ -54,7 +53,6 @@ public class MemoryAccess implements Element {
 			}
 			else if (op_type==OperationType.load)
 			{
-				// int load_result = containingProcessor.getMainMemory().getWord(alu_result);
 				Simulator.getEventQueue().addEvent(
 					new MemoryReadEvent(
 						Clock.getCurrentTime()+Configuration.mainMemoryLatency,
@@ -72,17 +70,13 @@ public class MemoryAccess implements Element {
 
 	@Override
 	public void handleEvent(Event e) {
-		// TODO Auto-generated method stub
 		if(e instanceof ExecutionCompleteEvent) {
-			// MemoryResponseEvent event = (MemoryResponseEvent) e;
-			// MA_RW_Latch.setLoad_result(event.getValue());
 			EX_MA_Latch.setMA_busy(false);
 			MA_RW_Latch.setRW_enable(true);
 			return;
 		}
 		MemoryResponseEvent event=(MemoryResponseEvent) e;
 		MA_RW_Latch.setLoad_result(event.getValue());
-		EX_MA_Latch.setMA_busy(false);
 		MA_RW_Latch.setRW_enable(true);
 	}
 

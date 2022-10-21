@@ -33,7 +33,8 @@ public class OperandFetch {
 		queue.add(-1);
 		queue.add(-1);
 		queue.add(-1);
-		// queue.add(-1);
+		queue.add(-1);
+		queue.add(-1);
 	}
 
 	boolean checkdatahazard(int[] operands) {
@@ -200,21 +201,16 @@ public class OperandFetch {
 			OF_EX_Latch.setEX_enable(noDataHazard);
 			if(!noDataHazard){
 				IF_EnableLatch.setFreeze(true);
-				System.out.println("\n\nData Hazard - Interlock\n\n");
 				Statistics.setDatahazards(Statistics.getDatahazards() + 1);
 			}
-			// OF_EX_Latch.setEX_enable(true);
+
 			updateQueue(addtoqueue);
 		}
 		else if (!Proceed) {
-			// Proceed = true;
-			// updateQueue(addtoqueue);
 			OF_EX_Latch.setEX_enable(false);
-			// System.out.println("\n\nControl Hazard - Interlock\n\n");
 		}else{
 			OF_EX_Latch.setEX_enable(false);
 		}
-		// updateQueue(addtoqueue);
 	}
 
 	public void setisEnd(boolean isEnd) {
