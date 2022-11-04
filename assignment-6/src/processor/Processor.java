@@ -1,5 +1,6 @@
 package processor;
 
+import processor.memorysystem.Cache;
 import processor.memorysystem.MainMemory;
 import processor.pipeline.EX_IF_LatchType;
 import processor.pipeline.EX_MA_LatchType;
@@ -31,6 +32,8 @@ public class Processor {
 	Execute EXUnit;
 	MemoryAccess MAUnit;
 	RegisterWrite RWUnit;
+	Cache l1iCache;
+	Cache l1dCache;
 	
 	public Processor()
 	{
@@ -43,6 +46,9 @@ public class Processor {
 		EX_MA_Latch = new EX_MA_LatchType();
 		EX_IF_Latch = new EX_IF_LatchType();
 		MA_RW_Latch = new MA_RW_LatchType();
+
+		l1iCache = new Cache(this, 1, 16);
+		l1dCache = new Cache(this, 4, 1024);
 		
 		IFUnit = new InstructionFetch(this, IF_EnableLatch, IF_OF_Latch, EX_IF_Latch);
 		OFUnit = new OperandFetch(this, IF_OF_Latch, OF_EX_Latch, IF_EnableLatch);
@@ -92,6 +98,14 @@ public class Processor {
 
 	public RegisterWrite getRWUnit() {
 		return RWUnit;
+	}
+
+	public Cache getL1iCache() {
+		return l1iCache;
+	}
+
+	public Cache getL1dCache() {
+		return l1dCache;
 	}
 
 }

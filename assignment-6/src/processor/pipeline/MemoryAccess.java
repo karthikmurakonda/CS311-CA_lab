@@ -1,6 +1,5 @@
 package processor.pipeline;
 
-import configuration.Configuration;
 import generic.Element;
 import generic.Event;
 import generic.ExecutionCompleteEvent;
@@ -41,9 +40,9 @@ public class MemoryAccess implements Element {
 				instruction.getSourceOperand1().getValue());
 				Simulator.getEventQueue().addEvent(
 					new MemoryWriteEvent(
-						Clock.getCurrentTime()+Configuration.mainMemoryLatency,
+						Clock.getCurrentTime()+containingProcessor.getL1dCache().latency,
 						this,
-						containingProcessor.getMainMemory(),
+						containingProcessor.getL1dCache(),
 						alu_result,
 						val_store
 					)
@@ -55,9 +54,9 @@ public class MemoryAccess implements Element {
 			{
 				Simulator.getEventQueue().addEvent(
 					new MemoryReadEvent(
-						Clock.getCurrentTime()+Configuration.mainMemoryLatency,
+						Clock.getCurrentTime()+containingProcessor.getL1dCache().latency,
 						this,
-						containingProcessor.getMainMemory(),
+						containingProcessor.getL1dCache(),
 						alu_result
 						)
 				);

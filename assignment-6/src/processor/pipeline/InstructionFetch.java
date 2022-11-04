@@ -1,6 +1,5 @@
 package processor.pipeline;
 
-import configuration.Configuration;
 import generic.Element;
 import generic.Event;
 import generic.MemoryReadEvent;
@@ -33,13 +32,13 @@ public class InstructionFetch implements Element{
 
 				Simulator.getEventQueue().addEvent(
 						new MemoryReadEvent(
-								Clock.getCurrentTime()+Configuration.mainMemoryLatency,
+								Clock.getCurrentTime() + containingProcessor.getL1iCache().latency,
 								this,
-								containingProcessor.getMainMemory(),
+								containingProcessor.getL1iCache(),
 								currentPC
 								)
 						);
-				System.out.println("H1");
+				// System.out.println("H1");
 				IF_OF_Latch.setIF_branching_busy(true);
 
 
@@ -58,9 +57,9 @@ public class InstructionFetch implements Element{
 					
 					Simulator.getEventQueue().addEvent(
 						new MemoryReadEvent(
-							Clock.getCurrentTime()+ Configuration.mainMemoryLatency,
+							Clock.getCurrentTime()+ containingProcessor.getL1iCache().latency,
 							this,
-							containingProcessor.getMainMemory(),
+							containingProcessor.getL1iCache(),
 							currentPC
 						)
 					);
