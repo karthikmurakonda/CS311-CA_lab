@@ -47,8 +47,8 @@ public class Processor {
 		EX_IF_Latch = new EX_IF_LatchType();
 		MA_RW_Latch = new MA_RW_LatchType();
 
-		l1iCache = new Cache(this, 1, 16);
-		l1dCache = new Cache(this, 4, 1024);
+		l1iCache = new Cache(this, 0, 16);
+		l1dCache = new Cache(this, 0, 16);
 		
 		IFUnit = new InstructionFetch(this, IF_EnableLatch, IF_OF_Latch, EX_IF_Latch);
 		OFUnit = new OperandFetch(this, IF_OF_Latch, OF_EX_Latch, IF_EnableLatch);
